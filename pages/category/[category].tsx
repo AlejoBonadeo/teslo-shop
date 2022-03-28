@@ -3,6 +3,7 @@ import { GetStaticPaths, GetStaticProps } from "next";
 import { FC } from "react";
 import { ShopLayout } from "../../components/layouts";
 import { ProductList } from "../../components/products";
+import { dbProducts } from "../../database";
 import { Product } from "../../interfaces";
 
 interface Props {
@@ -56,12 +57,9 @@ export const getStaticPaths: GetStaticPaths = async ctx => {
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const response = await fetch(
-    `http://localhost:3000/api/products?gender=${params!.category}`
-  );
-  const body = await response.json();
+  const products = await dbProducts.getProductByCategory(params!.category as any);
 
-  if (body.message) {
+  if (!products) {
     return {
       redirect: {
         destination: "/",
@@ -71,7 +69,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   } else {
     return {
       props: {
-        products: body,
+        products,
         category: params!.category
       },
     };

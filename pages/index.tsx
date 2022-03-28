@@ -7,7 +7,7 @@ import { useProducts } from "../hooks";
 
 const Home: NextPage = () => {
 
-  const {products, loading } = useProducts('/products')
+  const {products, loading } = useProducts('/products');
 
   return (
     <ShopLayout

@@ -8,27 +8,34 @@ import {
   Typography,
 } from "@mui/material";
 import NextLink from "next/link";
-import { FC } from "react";
-import { initialData } from "../../database/products";
+import { FC, useContext } from "react";
+import { CartContext } from "../../context";
+import { CartProduct, OrderItem } from "../../interfaces";
 import { ItemCounter } from "../ui";
-
-const productsInCart = initialData.products.filter((_, i) => i < 3);
 
 interface Props {
   canEdit?: boolean;
+  items: CartProduct[];
 }
 
-export const CartList: FC<Props> = ({ canEdit = false }) => {
+export const CartList: FC<Props> = ({ canEdit = false, items }) => {
+  const { cart, updateQuantity, removeProduct} = useContext(CartContext);
+
   return (
     <>
-      {productsInCart.map((product) => (
-        <Grid container spacing={2} key={product.slug} sx={{ mb: 1 }}>
+      {items.map((product) => (
+        <Grid
+          container
+          spacing={2}
+          key={product.slug + product.size}
+          sx={{ mb: 1 }}
+        >
           <Grid item xs={3}>
             <NextLink href={`/products/${product.slug}`} passHref>
               <Link>
                 <CardActionArea>
                   <CardMedia
-                    image={`/products/${product.images[0]}`}
+                    image={`/products/${product.image}`}
                     component="img"
                     sx={{ borderRadius: "5px", overflow: "hidden" }}
                   />
@@ -40,12 +47,24 @@ export const CartList: FC<Props> = ({ canEdit = false }) => {
             <Box display="flex" flexDirection="column">
               <Typography variant="body1">{product.title}</Typography>
               <Typography variant="body1">
-                Talle: <strong>S</strong>
+                Talle: <strong>{product.size}</strong>
               </Typography>
               {canEdit ? (
-                <ItemCounter />
+                <ItemCounter
+                  quantity={product.quantity}
+                  addOne={() => {
+                    if (product.quantity === 10) return;
+                    updateQuantity({...product, quantity: product.quantity + 1});
+                  }}
+                  removeOne={() => {
+                    if (product.quantity === 1) return;
+                    updateQuantity({...product, quantity: product.quantity - 1});
+                  }}
+                />
               ) : (
-                <Typography variant="h5">1 item</Typography>
+                <Typography variant="h5">
+                  {product.quantity} producto{product.quantity > 1 && "s"}
+                </Typography>
               )}
             </Box>
           </Grid>
@@ -56,9 +75,11 @@ export const CartList: FC<Props> = ({ canEdit = false }) => {
             alignItems="center"
             flexDirection="column"
           >
-            <Typography variant="subtitle1">${product.price}</Typography>
+            <Typography variant="subtitle1">
+              ${product.price * product.quantity}
+            </Typography>
             {canEdit && (
-              <Button variant="text" color="secondary">
+              <Button variant="text" color="secondary" onClick={() => removeProduct(product._id, product.size!)}>
                 Remover
               </Button>
             )}

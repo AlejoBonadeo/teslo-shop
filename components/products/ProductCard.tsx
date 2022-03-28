@@ -6,6 +6,7 @@ import {
   Box,
   Typography,
   Link,
+  Chip,
 } from "@mui/material";
 import NextLink from "next/link";
 import { FC, useEffect, useMemo, useState } from "react";
@@ -13,7 +14,7 @@ import { Product } from "../../interfaces";
 
 interface Props extends Product {}
 
-export const ProductCard: FC<Props> = ({ images, title, price, slug }) => {
+export const ProductCard: FC<Props> = ({ images, title, price, slug, inStock }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
 
@@ -36,15 +37,24 @@ export const ProductCard: FC<Props> = ({ images, title, price, slug }) => {
       onMouseLeave={() => setIsHovered(false)}
     >
       <Card>
-        <NextLink href={`/products/slug`} prefetch={false} passHref>
+        <NextLink href={`/products/${slug}`} prefetch={false} passHref>
           <Link>
             <CardActionArea>
-              <CardMedia
-                component="img"
-                image={productImage}
-                alt={title}
-                onLoad={() => setIsImageLoaded(true)}
-              />
+              <>
+                {!!inStock ||
+                  <Chip
+                    color="primary"
+                    label="No hay disponibles"
+                    sx={{ position: 'absolute', zIndex: 1, top: 10, left: 10}}
+                  />
+                }
+                <CardMedia
+                  component="img"
+                  image={productImage}
+                  alt={title}
+                  onLoad={() => setIsImageLoaded(true)}
+                />
+              </>
             </CardActionArea>
           </Link>
         </NextLink>
