@@ -12,6 +12,7 @@ export interface Order {
   total: number;
   isPaid: boolean;
   piadAt?: string;
+  transactionId?: string;
 }
 
 export interface OrderItem {

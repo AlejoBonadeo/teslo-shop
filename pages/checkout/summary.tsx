@@ -52,7 +52,7 @@ const Summary = () => {
       </Typography>
       <Grid container marginTop={2}>
         <Grid item xs={12} sm={7}>
-          <CartList />
+          <CartList items={cart} />
         </Grid>
         <Grid item xs={12} sm={5}>
           <Card className="summary-card">
@@ -88,7 +88,7 @@ const Summary = () => {
                   <Link underline="always">Editar</Link>
                 </NextLink>
               </Box>
-              <OrderSummary />
+              <OrderSummary items={cart} />
               <Box sx={{ mt: 3 }} display="flex" flexDirection="column" >
                 <Button
                   color="secondary"
